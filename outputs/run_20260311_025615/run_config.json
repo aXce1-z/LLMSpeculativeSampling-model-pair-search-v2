@@ -1,0 +1,53 @@
+﻿{
+  "args": {
+    "pairs_file": "/content/LLMSpeculativeSampling-model-pair-search-v2/candidate_pairs.json",
+    "output_root": "/content/LLMSpeculativeSampling-model-pair-search-v2/outputs",
+    "pair_names": [
+      "qwen25_0p5b_to_3b"
+    ],
+    "pair_tiers": [
+      "default"
+    ],
+    "prompt_sets": [
+      "core"
+    ],
+    "prompts_per_set": 2,
+    "prompt_file": "/content/LLMSpeculativeSampling-model-pair-search-v2/benchmark_prompts.jsonl",
+    "gammas": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "top_ks": [
+      20,
+      50,
+      100,
+      200
+    ],
+    "top_ps": [
+      0.0,
+      0.9
+    ],
+    "temperature": 1.0,
+    "max_tokens": 64,
+    "seed": 123,
+    "device": "cuda",
+    "dtype": "float16",
+    "trust_remote_code": false,
+    "warmup": 1,
+    "run_small_baseline": false
+  },
+  "selected_pairs": [
+    {
+      "name": "qwen25_0p5b_to_3b",
+      "approx_model_name": "Qwen/Qwen2.5-0.5B",
+      "target_model_name": "Qwen/Qwen2.5-3B",
+      "family": "qwen2.5",
+      "tier": "default",
+      "notes": "Small draft with larger target."
+    }
+  ],
+  "prompt_count": 9
+}

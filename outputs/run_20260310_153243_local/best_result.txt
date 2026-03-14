@@ -1,0 +1,10 @@
+﻿output_dir=E:\LLMSpeculativeSampling-model-pair-search-v2\outputs\run_20260310_153243
+trial_count=192
+best_pair=qwen25_0p5b_to_3b
+best_gamma=4
+best_top_k=50
+best_top_p=0.0
+best_speedup=2.4568
+best_acceptance_rate=0.8883
+best_speculative_tps=21.5619
+best_baseline_large_tps=8.7937

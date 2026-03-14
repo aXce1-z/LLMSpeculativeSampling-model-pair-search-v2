@@ -1,0 +1,58 @@
+﻿{
+  "args": {
+    "pairs_file": "/content/LLMSpeculativeSampling-model-pair-search-v2/candidate_pairs.json",
+    "output_root": "/content/LLMSpeculativeSampling-model-pair-search-v2/outputs",
+    "pair_names": [
+      "llama32_1b_to_31_8b"
+    ],
+    "pair_tiers": [
+      "default"
+    ],
+    "prompt_sets": [
+      "continuation",
+      "code_completion",
+      "structured_extraction"
+    ],
+    "prompts_per_set": 2,
+    "prompt_file": null,
+    "gammas": [
+      4,
+      6,
+      8,
+      10
+    ],
+    "top_ks": [
+      50,
+      100,
+      150,
+      200
+    ],
+    "top_ps": [
+      0.0,
+      0.9
+    ],
+    "temperature": 1.0,
+    "max_tokens": 64,
+    "seed": 123,
+    "device": "cuda",
+    "dtype": "float16",
+    "approx_quant": "int8",
+    "target_quant": "int8",
+    "trust_remote_code": false,
+    "warmup": 1,
+    "run_small_baseline": false,
+    "fail_on_incompatible_pairs": false,
+    "fail_on_pair_error": false
+  },
+  "selected_pairs": [
+    {
+      "name": "llama32_1b_to_31_8b",
+      "approx_model_name": "meta-llama/Llama-3.2-1B",
+      "target_model_name": "meta-llama/Llama-3.1-8B",
+      "family": "llama_cross",
+      "tier": "llama_experimental",
+      "notes": "Experimental cross-series Llama pair. Likely vocab-compatible (128256 vs 128256), but requires runtime compatibility check and HF access."
+    }
+  ],
+  "prompt_count": 6
+}

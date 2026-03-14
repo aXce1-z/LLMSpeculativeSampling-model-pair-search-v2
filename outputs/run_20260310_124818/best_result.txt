@@ -1,0 +1,10 @@
+﻿output_dir=/content/LLMSpeculativeSampling-model-pair-search-v2/outputs/run_20260310_124818
+trial_count=2880
+best_pair=distilgpt2_to_gpt2_medium
+best_gamma=4
+best_top_k=50
+best_top_p=0.0
+best_speedup=1.4114
+best_acceptance_rate=0.7470
+best_speculative_tps=78.8746
+best_baseline_large_tps=55.8436

@@ -1,0 +1,106 @@
+﻿{
+  "args": {
+    "pairs_file": "/content/LLMSpeculativeSampling-model-pair-search-v2/candidate_pairs.json",
+    "output_root": "/content/LLMSpeculativeSampling-model-pair-search-v2/outputs",
+    "pair_names": [
+      "o_7olmo_1b_tb",
+      "smollm2_135m_to_1p7b",
+      "qwen2_0p5b_to_7b",
+      "qwen25_0p5b_to_3b",
+      "opt_125m_to_1p3b",
+      "opt_1p3b_to_6p7b",
+      "pythia_160m_to_1b",
+      "pythia_410m_to_2p8b"
+    ],
+    "pair_tiers": [
+      "default"
+    ],
+    "prompt_sets": [
+      "core"
+    ],
+    "prompts_per_set": 2,
+    "prompt_file": "/content/LLMSpeculativeSampling-model-pair-search-v2/benchmark_prompts.jsonl",
+    "gammas": [
+      2,
+      4,
+      6
+    ],
+    "top_ks": [
+      50,
+      100
+    ],
+    "top_ps": [
+      0.0,
+      0.9
+    ],
+    "temperature": 1.0,
+    "max_tokens": 64,
+    "seed": 123,
+    "device": "cuda",
+    "dtype": "float16",
+    "trust_remote_code": false,
+    "warmup": 1,
+    "run_small_baseline": false,
+    "fail_on_incompatible_pairs": false,
+    "fail_on_pair_error": false
+  },
+  "selected_pairs": [
+    {
+      "name": "qwen25_0p5b_to_3b",
+      "approx_model_name": "Qwen/Qwen2.5-0.5B",
+      "target_model_name": "Qwen/Qwen2.5-3B",
+      "family": "qwen2.5",
+      "tier": "x5",
+      "notes": "6.0x; vocab/tokenizer precheck passed."
+    },
+    {
+      "name": "opt_125m_to_1p3b",
+      "approx_model_name": "facebook/opt-125m",
+      "target_model_name": "facebook/opt-1.3b",
+      "family": "opt",
+      "tier": "x5",
+      "notes": "10.4x; vocab/tokenizer precheck passed."
+    },
+    {
+      "name": "opt_1p3b_to_6p7b",
+      "approx_model_name": "facebook/opt-1.3b",
+      "target_model_name": "facebook/opt-6.7b",
+      "family": "opt",
+      "tier": "x5",
+      "notes": "5.15x; vocab/tokenizer precheck passed."
+    },
+    {
+      "name": "pythia_160m_to_1b",
+      "approx_model_name": "EleutherAI/pythia-160m-deduped",
+      "target_model_name": "EleutherAI/pythia-1b-deduped",
+      "family": "pythia",
+      "tier": "x5",
+      "notes": "6.25x; vocab/tokenizer precheck passed."
+    },
+    {
+      "name": "pythia_410m_to_2p8b",
+      "approx_model_name": "EleutherAI/pythia-410m-deduped",
+      "target_model_name": "EleutherAI/pythia-2.8b-deduped",
+      "family": "pythia",
+      "tier": "x5",
+      "notes": "6.83x; vocab/tokenizer precheck passed."
+    },
+    {
+      "name": "smollm2_135m_to_1p7b",
+      "approx_model_name": "HuggingFaceTB/SmolLM2-135M",
+      "target_model_name": "HuggingFaceTB/SmolLM2-1.7B",
+      "family": "smollm2",
+      "tier": "x5",
+      "notes": "12.6x; edge-oriented public pair. Requires runtime compatibility check."
+    },
+    {
+      "name": "qwen2_0p5b_to_7b",
+      "approx_model_name": "Qwen/Qwen2-0.5B",
+      "target_model_name": "Qwen/Qwen2-7B",
+      "family": "qwen2",
+      "tier": "x5",
+      "notes": "14x; public pair with strong size gap. Requires runtime compatibility check."
+    }
+  ],
+  "prompt_count": 8
+}

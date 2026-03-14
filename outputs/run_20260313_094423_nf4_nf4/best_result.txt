@@ -1,0 +1,10 @@
+﻿output_dir=/content/LLMSpeculativeSampling-model-pair-search-v2/outputs/run_20260313_094423
+trial_count=192
+best_pair=llama32_1b_to_31_8b
+best_gamma=6
+best_top_k=100
+best_top_p=0.0
+best_speedup=1.1364
+best_acceptance_rate=0.8315
+best_speculative_tps=15.8235
+best_baseline_large_tps=13.9268
