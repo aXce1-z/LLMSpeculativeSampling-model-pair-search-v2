@@ -1,4 +1,4 @@
-﻿
+
 import csv
 import itertools
 import json
@@ -562,6 +562,8 @@ def run_benchmark(args):
     write_csv(out_dir / "summary_by_config.csv", summary_by_config, list(summary_by_config[0].keys()))
     summary_by_pair = aggregate_rows(rows, ["pair_name", "family", "approx_quant", "target_quant"])
     write_csv(out_dir / "summary_by_pair.csv", summary_by_pair, list(summary_by_pair[0].keys()))
+    summary_by_task = aggregate_rows(rows, ["pair_name", "family", "approx_quant", "target_quant", "task"])
+    write_csv(out_dir / "summary_by_task.csv", summary_by_task, list(summary_by_task[0].keys()))
 
     best = max(summary_by_config, key=lambda x: x["speedup"])
     best_text = [
@@ -581,5 +583,6 @@ def run_benchmark(args):
     print(f"  - {out_dir / 'trial_results.csv'}")
     print(f"  - {out_dir / 'summary_by_config.csv'}")
     print(f"  - {out_dir / 'summary_by_pair.csv'}")
+    print(f"  - {out_dir / 'summary_by_task.csv'}")
     print(f"  - {out_dir / 'best_result.txt'}")
 
