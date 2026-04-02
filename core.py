@@ -4,6 +4,7 @@ import itertools
 import json
 import statistics
 import time
+from dataclasses import dataclass
 from pathlib import Path
 
 import torch
@@ -91,6 +92,35 @@ def split_kv(kv):
     raise ValueError(f"Unexpected kv cache entry type: {type(kv)}")
 
 
+@dataclass
+class KVCacheStats:
+    generate_calls: int = 0
+    forward_calls: int = 0
+    prefill_forward_calls: int = 0
+    decode_forward_calls: int = 0
+    initial_prompt_prefill_forward_calls: int = 0
+    sampled_tokens: int = 0
+    prefill_tokens_total: int = 0
+    decode_tokens_total: int = 0
+    initial_prompt_prefill_tokens: int = 0
+    total_generate_ms: float = 0.0
+    total_forward_ms: float = 0.0
+    total_prefill_forward_ms: float = 0.0
+    total_decode_forward_ms: float = 0.0
+    initial_prompt_prefill_forward_ms: float = 0.0
+    total_sample_ms: float = 0.0
+    total_concat_ms: float = 0.0
+    total_rollback_ms: float = 0.0
+
+
+def _to_legacy_cache(past_key_values):
+    if past_key_values is None:
+        return None
+    if hasattr(past_key_values, "to_legacy_cache"):
+        return past_key_values.to_legacy_cache()
+    return past_key_values
+
+
 class KVCacheModel:
     def __init__(self, model, temperature=1.0, top_k=0, top_p=0.0):
         self._model = model
@@ -99,14 +129,28 @@ class KVCacheModel:
         self._temperature = temperature
         self._top_k = top_k
         self._top_p = top_p
+        self.stats = KVCacheStats()
+
+    def _normalize_logits_tensor(self, logits: torch.Tensor) -> torch.Tensor:
+        flat = logits.reshape(-1, logits.shape[-1])
+        flat = norm_logits(flat, self._temperature, self._top_k, self._top_p)
+        return flat.reshape_as(logits)
 
     def _forward_with_kvcache(self, input_ids: torch.Tensor):
         if self._past_key_values is None:
+            t0 = time.perf_counter()
             outputs = self._model(input_ids, use_cache=True)
-            self._prob_history = outputs.logits
-            for i in range(self._prob_history.shape[-2]):
-                self._prob_history[:, i, :] = norm_logits(self._prob_history[:, i, :], self._temperature, self._top_k, self._top_p)
-            self._past_key_values = outputs.past_key_values
+            dt_ms = (time.perf_counter() - t0) * 1000.0
+            self.stats.forward_calls += 1
+            self.stats.prefill_forward_calls += 1
+            self.stats.prefill_tokens_total += int(input_ids.shape[1])
+            self.stats.total_forward_ms += dt_ms
+            self.stats.total_prefill_forward_ms += dt_ms
+            self.stats.initial_prompt_prefill_forward_calls += 1
+            self.stats.initial_prompt_prefill_tokens += int(input_ids.shape[1])
+            self.stats.initial_prompt_prefill_forward_ms += dt_ms
+            self._prob_history = self._normalize_logits_tensor(outputs.logits)
+            self._past_key_values = _to_legacy_cache(outputs.past_key_values)
             return self._prob_history[:, -1, :]
 
         cached_len = self._prob_history.shape[1]
@@ -116,42 +160,64 @@ class KVCacheModel:
         if last_input_id.numel() == 0:
             return self._prob_history[:, -1, :]
 
+        t0 = time.perf_counter()
         outputs = self._model(last_input_id, past_key_values=self._past_key_values, use_cache=True)
+        dt_ms = (time.perf_counter() - t0) * 1000.0
+        uncached_tokens = int(last_input_id.shape[1])
+        self.stats.forward_calls += 1
+        self.stats.total_forward_ms += dt_ms
+        if uncached_tokens > 1:
+            self.stats.prefill_forward_calls += 1
+            self.stats.prefill_tokens_total += uncached_tokens
+            self.stats.total_prefill_forward_ms += dt_ms
+        else:
+            self.stats.decode_forward_calls += 1
+            self.stats.decode_tokens_total += uncached_tokens
+            self.stats.total_decode_forward_ms += dt_ms
         not_cached_q = outputs.logits
         if not_cached_q.dim() == 2:
             not_cached_q = torch.unsqueeze(not_cached_q, 0)
-        for i in range(not_cached_q.shape[-2]):
-            not_cached_q[:, i, :] = norm_logits(not_cached_q[:, i, :], self._temperature, self._top_k, self._top_p)
+        not_cached_q = self._normalize_logits_tensor(not_cached_q)
         self._prob_history = torch.cat([self._prob_history, not_cached_q], dim=1)
-        self._past_key_values = outputs.past_key_values
+        self._past_key_values = _to_legacy_cache(outputs.past_key_values)
         return not_cached_q[:, -1, :]
 
     @torch.no_grad()
     def generate(self, prefix: torch.Tensor, gamma: int):
+        t_generate0 = time.perf_counter()
+        self.stats.generate_calls += 1
         x = prefix
         for _ in range(gamma):
             q = self._forward_with_kvcache(x)
+            t_sample0 = time.perf_counter()
             next_tok = sample(q)
+            self.stats.total_sample_ms += (time.perf_counter() - t_sample0) * 1000.0
+            self.stats.sampled_tokens += 1
+            t_cat0 = time.perf_counter()
             x = torch.cat((x, next_tok), dim=1)
+            self.stats.total_concat_ms += (time.perf_counter() - t_cat0) * 1000.0
+        self.stats.total_generate_ms += (time.perf_counter() - t_generate0) * 1000.0
         return x
 
     @torch.no_grad()
     def rollback(self, end_pos: int):
-        if hasattr(self._past_key_values, "crop"):
-            self._past_key_values.crop(end_pos)
-        else:
-            trimmed = []
-            for kv in self._past_key_values:
-                k, v = split_kv(kv)
-                if isinstance(self._model, BloomForCausalLM):
-                    k = k[:, :, :end_pos]
-                    v = v[:, :end_pos, :]
-                else:
-                    k = k[:, :, :end_pos, :]
-                    v = v[:, :, :end_pos, :]
-                trimmed.append((k, v))
-            self._past_key_values = trimmed
+        t0 = time.perf_counter()
+        if self._past_key_values is None:
+            self.stats.total_rollback_ms += (time.perf_counter() - t0) * 1000.0
+            return
+        trimmed = []
+        for kv in self._past_key_values:
+            k, v = split_kv(kv)
+            if isinstance(self._model, BloomForCausalLM):
+                k = k[:, :, :end_pos]
+                v = v[:, :end_pos, :]
+            else:
+                k = k[:, :, :end_pos, :]
+                v = v[:, :, :end_pos, :]
+            trimmed.append((k, v))
+        self._past_key_values = trimmed
         self._prob_history = self._prob_history[:, :end_pos, :]
+        self.stats.total_rollback_ms += (time.perf_counter() - t0) * 1000.0
 
 @torch.no_grad()
 def autoregressive_sampling(x, model, num_tokens, temperature=1.0, top_k=0, top_p=0.0):
@@ -247,8 +313,19 @@ def speculative_sampling_with_stats(prefix, approx_model, target_model, max_len,
         "avg_contributed_per_round": statistics.mean(contributed_per_round) if contributed_per_round else 0.0,
         "avg_draft_generate_ms_per_round": statistics.mean(draft_generate_ms_per_round) if draft_generate_ms_per_round else 0.0,
         "avg_target_verify_ms_per_round": statistics.mean(target_verify_ms_per_round) if target_verify_ms_per_round else 0.0,
+        "avg_draft_prefill_forward_ms_per_round": approx_cache.stats.total_prefill_forward_ms / rounds if rounds else 0.0,
+        "avg_draft_decode_forward_ms_per_round": approx_cache.stats.total_decode_forward_ms / rounds if rounds else 0.0,
+        "avg_incremental_prefill_forward_ms_per_round": (
+            max(approx_cache.stats.total_prefill_forward_ms - approx_cache.stats.initial_prompt_prefill_forward_ms, 0.0) / rounds
+            if rounds else 0.0
+        ),
         "draft_generate_ms_total": sum(draft_generate_ms_per_round),
         "target_verify_ms_total": sum(target_verify_ms_per_round),
+        "draft_prefill_forward_ms_total": approx_cache.stats.total_prefill_forward_ms,
+        "draft_decode_forward_ms_total": approx_cache.stats.total_decode_forward_ms,
+        "incremental_prefill_forward_ms_total": max(
+            approx_cache.stats.total_prefill_forward_ms - approx_cache.stats.initial_prompt_prefill_forward_ms, 0.0
+        ),
     }
     return prefix, stats
 
@@ -376,7 +453,11 @@ def aggregate_rows(rows, group_keys):
         "speculative_tps", "speedup", "acceptance_rate", "all_accept_round_rate",
         "resample_round_rate", "avg_accepted_per_round", "avg_contributed_per_round",
         "avg_draft_generate_ms_per_round", "avg_target_verify_ms_per_round",
-        "draft_generate_ms_total", "target_verify_ms_total", "rounds", "generated_tokens"
+        "avg_draft_prefill_forward_ms_per_round", "avg_draft_decode_forward_ms_per_round",
+        "avg_incremental_prefill_forward_ms_per_round",
+        "draft_generate_ms_total", "target_verify_ms_total",
+        "draft_prefill_forward_ms_total", "draft_decode_forward_ms_total",
+        "incremental_prefill_forward_ms_total", "rounds", "generated_tokens"
     ]
 
     summary = []
@@ -472,8 +553,14 @@ def run_trial(prompt_text, prompt_task, prompt_id, tokenizer, small_model, large
         "avg_contributed_per_round": round(spec_stats["avg_contributed_per_round"], 6),
         "avg_draft_generate_ms_per_round": round(spec_stats["avg_draft_generate_ms_per_round"], 6),
         "avg_target_verify_ms_per_round": round(spec_stats["avg_target_verify_ms_per_round"], 6),
+        "avg_draft_prefill_forward_ms_per_round": round(spec_stats["avg_draft_prefill_forward_ms_per_round"], 6),
+        "avg_draft_decode_forward_ms_per_round": round(spec_stats["avg_draft_decode_forward_ms_per_round"], 6),
+        "avg_incremental_prefill_forward_ms_per_round": round(spec_stats["avg_incremental_prefill_forward_ms_per_round"], 6),
         "draft_generate_ms_total": round(spec_stats["draft_generate_ms_total"], 6),
         "target_verify_ms_total": round(spec_stats["target_verify_ms_total"], 6),
+        "draft_prefill_forward_ms_total": round(spec_stats["draft_prefill_forward_ms_total"], 6),
+        "draft_decode_forward_ms_total": round(spec_stats["draft_decode_forward_ms_total"], 6),
+        "incremental_prefill_forward_ms_total": round(spec_stats["incremental_prefill_forward_ms_total"], 6),
     }
 
 def run_benchmark(args):
