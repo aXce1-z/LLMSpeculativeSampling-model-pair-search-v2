@@ -1,258 +1,298 @@
-﻿[
+[
     {
-        "name":  "distilgpt2_to_gpt2_medium",
-        "approx_model_name":  "distilgpt2",
-        "target_model_name":  "gpt2-medium",
-        "family":  "gpt2",
-        "tier":  "reference",
-        "notes":  "Strong reference pair for comparison."
+        "name": "distilgpt2_to_gpt2_medium",
+        "approx_model_name": "distilgpt2",
+        "target_model_name": "gpt2-medium",
+        "family": "gpt2",
+        "tier": "reference",
+        "notes": "Strong reference pair for comparison."
     },
     {
-        "name":  "qwen25_0p5b_to_3b",
-        "approx_model_name":  "Qwen/Qwen2.5-0.5B",
-        "target_model_name":  "Qwen/Qwen2.5-3B",
-        "family":  "qwen2.5",
-        "tier":  "x5",
-        "notes":  "6.0x; vocab/tokenizer precheck passed."
+        "name": "qwen25_0p5b_to_3b",
+        "approx_model_name": "Qwen/Qwen2.5-0.5B",
+        "target_model_name": "Qwen/Qwen2.5-3B",
+        "family": "qwen2.5",
+        "tier": "x5",
+        "notes": "6.0x; vocab/tokenizer precheck passed."
     },
     {
-        "name":  "qwen25_0p5b_to_14b",
-        "approx_model_name":  "Qwen/Qwen2.5-0.5B",
-        "target_model_name":  "Qwen/Qwen2.5-14B",
-        "family":  "qwen2.5",
-        "tier":  "qwen_heavy",
-        "notes":  "28x size gap; dense same-family exploratory pair focused on acceptance/speedup tradeoff."
+        "name": "qwen25_0p5b_to_14b",
+        "approx_model_name": "Qwen/Qwen2.5-0.5B",
+        "target_model_name": "Qwen/Qwen2.5-14B",
+        "family": "qwen2.5",
+        "tier": "qwen_heavy",
+        "notes": "28x size gap; dense same-family exploratory pair focused on acceptance/speedup tradeoff."
     },
     {
-        "name":  "qwen25_0p5b_to_7b",
-        "approx_model_name":  "Qwen/Qwen2.5-0.5B",
-        "target_model_name":  "Qwen/Qwen2.5-7B",
-        "family":  "qwen2.5",
-        "tier":  "qwen_heavy",
-        "notes":  "14x size gap; same-family dense pair between current 3B and 14B targets."
+        "name": "qwen25_0p5b_to_7b",
+        "approx_model_name": "Qwen/Qwen2.5-0.5B",
+        "target_model_name": "Qwen/Qwen2.5-7B",
+        "family": "qwen2.5",
+        "tier": "qwen_heavy",
+        "notes": "14x size gap; same-family dense pair between current 3B and 14B targets."
     },
     {
-        "name":  "qwen25_0p5b_to_32b",
-        "approx_model_name":  "Qwen/Qwen2.5-0.5B",
-        "target_model_name":  "Qwen/Qwen2.5-32B",
-        "family":  "qwen2.5",
-        "tier":  "qwen_heavy",
-        "notes":  "64x size gap; dense same-family heavy exploratory pair for A100-class hardware."
+        "name": "qwen25_0p5b_to_32b",
+        "approx_model_name": "Qwen/Qwen2.5-0.5B",
+        "target_model_name": "Qwen/Qwen2.5-32B",
+        "family": "qwen2.5",
+        "tier": "qwen_heavy",
+        "notes": "64x size gap; dense same-family heavy exploratory pair for A100-class hardware."
     },
     {
-        "name":  "qwen25_1p5b_to_14b",
-        "approx_model_name":  "Qwen/Qwen2.5-1.5B",
-        "target_model_name":  "Qwen/Qwen2.5-14B",
-        "family":  "qwen2.5",
-        "tier":  "qwen_heavy",
-        "notes":  "9.3x size gap; denser draft alternative if 0.5B acceptance falls too much."
+        "name": "qwen25_1p5b_to_14b",
+        "approx_model_name": "Qwen/Qwen2.5-1.5B",
+        "target_model_name": "Qwen/Qwen2.5-14B",
+        "family": "qwen2.5",
+        "tier": "qwen_heavy",
+        "notes": "9.3x size gap; denser draft alternative if 0.5B acceptance falls too much."
     },
     {
-        "name":  "qwen25_1p5b_to_32b",
-        "approx_model_name":  "Qwen/Qwen2.5-1.5B",
-        "target_model_name":  "Qwen/Qwen2.5-32B",
-        "family":  "qwen2.5",
-        "tier":  "qwen_heavy",
-        "notes":  "21.3x size gap; dense same-family large-target exploratory pair."
+        "name": "qwen25_1p5b_to_32b",
+        "approx_model_name": "Qwen/Qwen2.5-1.5B",
+        "target_model_name": "Qwen/Qwen2.5-32B",
+        "family": "qwen2.5",
+        "tier": "qwen_heavy",
+        "notes": "21.3x size gap; dense same-family large-target exploratory pair."
     },
     {
-        "name":  "qwen25_1p5b_to_7b",
-        "approx_model_name":  "Qwen/Qwen2.5-1.5B",
-        "target_model_name":  "Qwen/Qwen2.5-7B",
-        "family":  "qwen2.5",
-        "tier":  "qwen_heavy",
-        "notes":  "4.7x size gap; heavier-draft alternative for acceptance-oriented comparison at 7B target."
+        "name": "qwen25_1p5b_to_72b",
+        "approx_model_name": "Qwen/Qwen2.5-1.5B",
+        "target_model_name": "Qwen/Qwen2.5-72B",
+        "family": "qwen2.5",
+        "tier": "qwen_heavy",
+        "notes": "48x size gap; very heavy same-family dense pair intended for 4-bit target experiments on A100-class hardware."
     },
     {
-        "name":  "qwen3_0p6b_to_8b",
-        "approx_model_name":  "Qwen/Qwen3-0.6B",
-        "target_model_name":  "Qwen/Qwen3-8B",
-        "family":  "qwen3",
-        "tier":  "qwen3_experimental",
-        "notes":  "Qwen3 dense pair. Watch reasoning mode and output-style drift versus Qwen2.5."
+        "name": "qwen25_1p5b_to_7b",
+        "approx_model_name": "Qwen/Qwen2.5-1.5B",
+        "target_model_name": "Qwen/Qwen2.5-7B",
+        "family": "qwen2.5",
+        "tier": "qwen_heavy",
+        "notes": "4.7x size gap; heavier-draft alternative for acceptance-oriented comparison at 7B target."
     },
     {
-        "name":  "qwen3_0p6b_to_14b",
-        "approx_model_name":  "Qwen/Qwen3-0.6B",
-        "target_model_name":  "Qwen/Qwen3-14B",
-        "family":  "qwen3",
-        "tier":  "qwen3_experimental",
-        "notes":  "Qwen3 dense pair with larger target. Acceptance and verbosity may differ from Qwen2.5."
+        "name": "qwen3_0p6b_to_8b",
+        "approx_model_name": "Qwen/Qwen3-0.6B",
+        "target_model_name": "Qwen/Qwen3-8B",
+        "family": "qwen3",
+        "tier": "qwen3_experimental",
+        "notes": "Qwen3 dense pair. Watch reasoning mode and output-style drift versus Qwen2.5."
     },
     {
-        "name":  "qwen3_0p6b_to_32b",
-        "approx_model_name":  "Qwen/Qwen3-0.6B",
-        "target_model_name":  "Qwen/Qwen3-32B",
-        "family":  "qwen3",
-        "tier":  "qwen3_experimental",
-        "notes":  "Very heavy Qwen3 dense pair for A100-class hardware."
+        "name": "qwen3_0p6b_to_14b",
+        "approx_model_name": "Qwen/Qwen3-0.6B",
+        "target_model_name": "Qwen/Qwen3-14B",
+        "family": "qwen3",
+        "tier": "qwen3_experimental",
+        "notes": "Qwen3 dense pair with larger target. Acceptance and verbosity may differ from Qwen2.5."
     },
     {
-        "name":  "qwen3_1p7b_to_14b",
-        "approx_model_name":  "Qwen/Qwen3-1.7B",
-        "target_model_name":  "Qwen/Qwen3-14B",
-        "family":  "qwen3",
-        "tier":  "qwen3_experimental",
-        "notes":  "Heavier Qwen3 draft alternative if 0.6B acceptance is too low."
+        "name": "qwen3_0p6b_to_32b",
+        "approx_model_name": "Qwen/Qwen3-0.6B",
+        "target_model_name": "Qwen/Qwen3-32B",
+        "family": "qwen3",
+        "tier": "qwen3_experimental",
+        "notes": "Very heavy Qwen3 dense pair for A100-class hardware."
     },
     {
-        "name":  "qwen3_1p7b_to_32b",
-        "approx_model_name":  "Qwen/Qwen3-1.7B",
-        "target_model_name":  "Qwen/Qwen3-32B",
-        "family":  "qwen3",
-        "tier":  "qwen3_experimental",
-        "notes":  "Large-target Qwen3 dense pair."
+        "name": "qwen3_1p7b_to_14b",
+        "approx_model_name": "Qwen/Qwen3-1.7B",
+        "target_model_name": "Qwen/Qwen3-14B",
+        "family": "qwen3",
+        "tier": "qwen3_experimental",
+        "notes": "Heavier Qwen3 draft alternative if 0.6B acceptance is too low."
     },
     {
-        "name":  "qwen3_0p6b_to_30b_a3b",
-        "approx_model_name":  "Qwen/Qwen3-0.6B",
-        "target_model_name":  "Qwen/Qwen3-30B-A3B",
-        "family":  "qwen3_moe",
-        "tier":  "qwen3_moe",
-        "notes":  "MoE target exploratory pair. Verify speedup may look good but MoE behavior is not directly comparable to dense pairs."
+        "name": "qwen3_1p7b_to_32b",
+        "approx_model_name": "Qwen/Qwen3-1.7B",
+        "target_model_name": "Qwen/Qwen3-32B",
+        "family": "qwen3",
+        "tier": "qwen3_experimental",
+        "notes": "Large-target Qwen3 dense pair."
     },
     {
-        "name":  "qwen3_1p7b_to_30b_a3b",
-        "approx_model_name":  "Qwen/Qwen3-1.7B",
-        "target_model_name":  "Qwen/Qwen3-30B-A3B",
-        "family":  "qwen3_moe",
-        "tier":  "qwen3_moe",
-        "notes":  "MoE target with heavier draft; acceptance may improve but draft cost rises."
+        "name": "qwen3_0p6b_to_30b_a3b",
+        "approx_model_name": "Qwen/Qwen3-0.6B",
+        "target_model_name": "Qwen/Qwen3-30B-A3B",
+        "family": "qwen3_moe",
+        "tier": "qwen3_moe",
+        "notes": "MoE target exploratory pair. Verify speedup may look good but MoE behavior is not directly comparable to dense pairs."
     },
     {
-        "name":  "opt_125m_to_1p3b",
-        "approx_model_name":  "facebook/opt-125m",
-        "target_model_name":  "facebook/opt-1.3b",
-        "family":  "opt",
-        "tier":  "x5",
-        "notes":  "10.4x; vocab/tokenizer precheck passed."
+        "name": "qwen3_1p7b_to_30b_a3b",
+        "approx_model_name": "Qwen/Qwen3-1.7B",
+        "target_model_name": "Qwen/Qwen3-30B-A3B",
+        "family": "qwen3_moe",
+        "tier": "qwen3_moe",
+        "notes": "MoE target with heavier draft; acceptance may improve but draft cost rises."
     },
     {
-        "name":  "opt_1p3b_to_6p7b",
-        "approx_model_name":  "facebook/opt-1.3b",
-        "target_model_name":  "facebook/opt-6.7b",
-        "family":  "opt",
-        "tier":  "x5",
-        "notes":  "5.15x; vocab/tokenizer precheck passed."
+        "name": "opt_125m_to_1p3b",
+        "approx_model_name": "facebook/opt-125m",
+        "target_model_name": "facebook/opt-1.3b",
+        "family": "opt",
+        "tier": "x5",
+        "notes": "10.4x; vocab/tokenizer precheck passed."
     },
     {
-        "name":  "pythia_160m_to_1b",
-        "approx_model_name":  "EleutherAI/pythia-160m-deduped",
-        "target_model_name":  "EleutherAI/pythia-1b-deduped",
-        "family":  "pythia",
-        "tier":  "x5",
-        "notes":  "6.25x; vocab/tokenizer precheck passed."
+        "name": "opt_1p3b_to_6p7b",
+        "approx_model_name": "facebook/opt-1.3b",
+        "target_model_name": "facebook/opt-6.7b",
+        "family": "opt",
+        "tier": "x5",
+        "notes": "5.15x; vocab/tokenizer precheck passed."
     },
     {
-        "name":  "pythia_410m_to_2p8b",
-        "approx_model_name":  "EleutherAI/pythia-410m-deduped",
-        "target_model_name":  "EleutherAI/pythia-2.8b-deduped",
-        "family":  "pythia",
-        "tier":  "x5",
-        "notes":  "6.83x; vocab/tokenizer precheck passed."
+        "name": "pythia_160m_to_1b",
+        "approx_model_name": "EleutherAI/pythia-160m-deduped",
+        "target_model_name": "EleutherAI/pythia-1b-deduped",
+        "family": "pythia",
+        "tier": "x5",
+        "notes": "6.25x; vocab/tokenizer precheck passed."
     },
     {
-        "name":  "bloom_560m_to_7b1",
-        "approx_model_name":  "bigscience/bloom-560m",
-        "target_model_name":  "bigscience/bloom-7b1",
-        "family":  "bloom",
-        "tier":  "x5",
-        "notes":  "12.68x; vocab/tokenizer precheck passed."
+        "name": "pythia_410m_to_2p8b",
+        "approx_model_name": "EleutherAI/pythia-410m-deduped",
+        "target_model_name": "EleutherAI/pythia-2.8b-deduped",
+        "family": "pythia",
+        "tier": "x5",
+        "notes": "6.83x; vocab/tokenizer precheck passed."
     },
     {
-        "name":  "bloomz_560m_to_7b1",
-        "approx_model_name":  "bigscience/bloomz-560m",
-        "target_model_name":  "bigscience/bloomz-7b1",
-        "family":  "bloomz",
-        "tier":  "x5",
-        "notes":  "12.68x; vocab/tokenizer precheck passed."
+        "name": "bloom_560m_to_7b1",
+        "approx_model_name": "bigscience/bloom-560m",
+        "target_model_name": "bigscience/bloom-7b1",
+        "family": "bloom",
+        "tier": "x5",
+        "notes": "12.68x; vocab/tokenizer precheck passed."
     },
     {
-        "name":  "codellama_7b_to_70b",
-        "approx_model_name":  "codellama/CodeLlama-7b-hf",
-        "target_model_name":  "codellama/CodeLlama-70b-hf",
-        "family":  "codellama",
-        "tier":  "x5",
-        "notes":  "10.0x; vocab_size precheck passed. Requires HF access to CodeLlama."
+        "name": "bloomz_560m_to_7b1",
+        "approx_model_name": "bigscience/bloomz-560m",
+        "target_model_name": "bigscience/bloomz-7b1",
+        "family": "bloomz",
+        "tier": "x5",
+        "notes": "12.68x; vocab/tokenizer precheck passed."
     },
     {
-        "name":  "codellama_13b_to_70b",
-        "approx_model_name":  "codellama/CodeLlama-13b-hf",
-        "target_model_name":  "codellama/CodeLlama-70b-hf",
-        "family":  "codellama",
-        "tier":  "x5",
-        "notes":  "5.38x; vocab_size precheck passed. Requires HF access to CodeLlama."
+        "name": "codellama_7b_to_70b",
+        "approx_model_name": "codellama/CodeLlama-7b-hf",
+        "target_model_name": "codellama/CodeLlama-70b-hf",
+        "family": "codellama",
+        "tier": "x5",
+        "notes": "10.0x; vocab_size precheck passed. Requires HF access to CodeLlama."
     },
     {
-        "name":  "olmo_1b_to_7b",
-        "approx_model_name":  "allenai/OLMo-1B",
-        "target_model_name":  "allenai/OLMo-7B-hf",
-        "family":  "olmo",
-        "tier":  "x5",
-        "notes":  "7.0x; public pair to test. Requires runtime compatibility check."
+        "name": "codellama_13b_to_70b",
+        "approx_model_name": "codellama/CodeLlama-13b-hf",
+        "target_model_name": "codellama/CodeLlama-70b-hf",
+        "family": "codellama",
+        "tier": "x5",
+        "notes": "5.38x; vocab_size precheck passed. Requires HF access to CodeLlama."
     },
     {
-        "name":  "smollm2_135m_to_1p7b",
-        "approx_model_name":  "HuggingFaceTB/SmolLM2-135M",
-        "target_model_name":  "HuggingFaceTB/SmolLM2-1.7B",
-        "family":  "smollm2",
-        "tier":  "x5",
-        "notes":  "12.6x; edge-oriented public pair. Requires runtime compatibility check."
+        "name": "olmo_1b_to_7b",
+        "approx_model_name": "allenai/OLMo-1B",
+        "target_model_name": "allenai/OLMo-7B-hf",
+        "family": "olmo",
+        "tier": "x5",
+        "notes": "7.0x; public pair to test. Requires runtime compatibility check."
     },
     {
-        "name":  "qwen2_0p5b_to_7b",
-        "approx_model_name":  "Qwen/Qwen2-0.5B",
-        "target_model_name":  "Qwen/Qwen2-7B",
-        "family":  "qwen2",
-        "tier":  "x5",
-        "notes":  "14x; public pair with strong size gap. Requires runtime compatibility check."
+        "name": "smollm2_135m_to_1p7b",
+        "approx_model_name": "HuggingFaceTB/SmolLM2-135M",
+        "target_model_name": "HuggingFaceTB/SmolLM2-1.7B",
+        "family": "smollm2",
+        "tier": "x5",
+        "notes": "12.6x; edge-oriented public pair. Requires runtime compatibility check."
     },
     {
-        "name":  "llama32_1b_to_3b",
-        "approx_model_name":  "meta-llama/Llama-3.2-1B",
-        "target_model_name":  "meta-llama/Llama-3.2-3B",
-        "family":  "llama3.2",
-        "tier":  "llama",
-        "notes":  "Practical single-GPU Llama pair for current framework. Requires HF access."
+        "name": "qwen2_0p5b_to_7b",
+        "approx_model_name": "Qwen/Qwen2-0.5B",
+        "target_model_name": "Qwen/Qwen2-7B",
+        "family": "qwen2",
+        "tier": "x5",
+        "notes": "14x; public pair with strong size gap. Requires runtime compatibility check."
     },
     {
-        "name":  "llama2_7b_to_70b",
-        "approx_model_name":  "meta-llama/Llama-2-7b-hf",
-        "target_model_name":  "meta-llama/Llama-2-70b-hf",
-        "family":  "llama2",
-        "tier":  "llama_heavy",
-        "notes":  "10x size gap. Heavy exploratory pair; Colab/A100 or multi-GPU preferred. Requires HF access."
+        "name": "llama32_1b_to_3b",
+        "approx_model_name": "meta-llama/Llama-3.2-1B",
+        "target_model_name": "meta-llama/Llama-3.2-3B",
+        "family": "llama3.2",
+        "tier": "llama",
+        "notes": "Practical single-GPU Llama pair for current framework. Requires HF access."
     },
     {
-        "name":  "llama2_13b_to_70b",
-        "approx_model_name":  "meta-llama/Llama-2-13b-hf",
-        "target_model_name":  "meta-llama/Llama-2-70b-hf",
-        "family":  "llama2",
-        "tier":  "llama_heavy",
-        "notes":  "5.38x size gap. Higher-acceptance but heavier draft exploratory pair. Requires HF access."
+        "name": "llama2_7b_to_70b",
+        "approx_model_name": "meta-llama/Llama-2-7b-hf",
+        "target_model_name": "meta-llama/Llama-2-70b-hf",
+        "family": "llama2",
+        "tier": "llama_heavy",
+        "notes": "10x size gap. Heavy exploratory pair; Colab/A100 or multi-GPU preferred. Requires HF access."
     },
     {
-        "name":  "llama31_8b_to_70b",
-        "approx_model_name":  "meta-llama/Llama-3.1-8B",
-        "target_model_name":  "meta-llama/Llama-3.1-70B",
-        "family":  "llama3.1",
-        "tier":  "llama_heavy",
-        "notes":  "8.75x size gap. Very heavy exploratory pair for A100-class hardware. Requires HF access."
+        "name": "llama2_13b_to_70b",
+        "approx_model_name": "meta-llama/Llama-2-13b-hf",
+        "target_model_name": "meta-llama/Llama-2-70b-hf",
+        "family": "llama2",
+        "tier": "llama_heavy",
+        "notes": "5.38x size gap. Higher-acceptance but heavier draft exploratory pair. Requires HF access."
     },
     {
-        "name":  "llama32_1b_to_31_8b",
-        "approx_model_name":  "meta-llama/Llama-3.2-1B",
-        "target_model_name":  "meta-llama/Llama-3.1-8B",
-        "family":  "llama_cross",
-        "tier":  "llama_experimental",
-        "notes":  "Experimental cross-series Llama pair. Likely vocab-compatible (128256 vs 128256), but requires runtime compatibility check and HF access."
+        "name": "llama31_8b_to_70b",
+        "approx_model_name": "meta-llama/Llama-3.1-8B",
+        "target_model_name": "meta-llama/Llama-3.1-70B",
+        "family": "llama3.1",
+        "tier": "llama_heavy",
+        "notes": "8.75x size gap. Very heavy exploratory pair for A100-class hardware. Requires HF access."
     },
     {
-        "name":  "gemma2_2b_to_9b",
-        "approx_model_name":  "google/gemma-2-2b-it",
-        "target_model_name":  "google/gemma-2-9b-it",
-        "family":  "gemma2",
-        "tier":  "gemma",
-        "notes":  "Strong single-family larger-target pair for Colab/A100. Requires HF access and runtime compatibility check."
+        "name": "llama32_1b_to_31_8b",
+        "approx_model_name": "meta-llama/Llama-3.2-1B",
+        "target_model_name": "meta-llama/Llama-3.1-8B",
+        "family": "llama_cross",
+        "tier": "llama_experimental",
+        "notes": "Experimental cross-series Llama pair. Likely vocab-compatible (128256 vs 128256), but requires runtime compatibility check and HF access."
+    },
+    {
+        "name": "gemma2_2b_to_9b",
+        "approx_model_name": "google/gemma-2-2b-it",
+        "target_model_name": "google/gemma-2-9b-it",
+        "family": "gemma2",
+        "tier": "gemma",
+        "notes": "Strong single-family larger-target pair for Colab/A100. Requires HF access and runtime compatibility check."
+    },
+    {
+        "name": "llama32_1b_to_31_70b",
+        "approx_model_name": "meta-llama/Llama-3.2-1B",
+        "target_model_name": "meta-llama/Llama-3.1-70B",
+        "family": "llama_cross",
+        "tier": "llama_heavy",
+        "notes": "Heavy cross-series Llama pair for A100-class hardware. Intended for 1B->70B exploratory testing."
+    },
+    {
+        "name": "qwen25_7b_to_14b",
+        "approx_model_name": "Qwen/Qwen2.5-7B",
+        "target_model_name": "Qwen/Qwen2.5-14B",
+        "family": "qwen2.5",
+        "tier": "qwen_heavy",
+        "notes": "2x size gap; acceptance-oriented heavy-draft dense pair."
+    },
+    {
+        "name": "qwen25_7b_to_32b",
+        "approx_model_name": "Qwen/Qwen2.5-7B",
+        "target_model_name": "Qwen/Qwen2.5-32B",
+        "family": "qwen2.5",
+        "tier": "qwen_heavy",
+        "notes": "4.57x size gap; heavy-draft large-target dense pair for A100-class hardware."
+    },
+    {
+        "name": "qwen25_7b_to_72b",
+        "approx_model_name": "Qwen/Qwen2.5-7B",
+        "target_model_name": "Qwen/Qwen2.5-72B",
+        "family": "qwen2.5",
+        "tier": "qwen_heavy",
+        "notes": "10.3x size gap; very heavy-draft dense pair intended for 4-bit target experiments on A100-class hardware."
     }
 ]
