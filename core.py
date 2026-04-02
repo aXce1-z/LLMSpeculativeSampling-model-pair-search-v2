@@ -71,6 +71,20 @@ def max_fn(x: torch.Tensor):
     return torch.where(x_max_sum > 0, x_max / x_max_sum, fallback)
 
 
+def align_prob_row(prob_row: torch.Tensor, target_vocab_size: int) -> torch.Tensor:
+    current_vocab_size = prob_row.shape[1]
+    if current_vocab_size == target_vocab_size:
+        return prob_row
+    if current_vocab_size > target_vocab_size:
+        return prob_row[:, :target_vocab_size]
+    pad = torch.zeros(
+        (prob_row.shape[0], target_vocab_size - current_vocab_size),
+        dtype=prob_row.dtype,
+        device=prob_row.device,
+    )
+    return torch.cat((prob_row, pad), dim=1)
+
+
 def split_kv(kv):
     if isinstance(kv, (tuple, list)) and len(kv) >= 2:
         return kv[0], kv[1]
@@ -187,7 +201,11 @@ def speculative_sampling_with_stats(prefix, approx_model, target_model, max_len,
                 torch.manual_seed(random_seed)
             r = torch.rand(1, device=model_device(target_model))
             j = x[:, prefix_len + i]
-            accept_prob = target_cache._prob_history[:, prefix_len + i - 1, j] / approx_cache._prob_history[:, prefix_len + i - 1, j]
+            approx_row = align_prob_row(
+                approx_cache._prob_history[:, prefix_len + i - 1, :],
+                target_cache._prob_history.shape[-1],
+            )
+            accept_prob = target_cache._prob_history[:, prefix_len + i - 1, j] / approx_row[:, j]
             if r > accept_prob:
                 n = prefix_len + i - 1
                 break
@@ -197,7 +215,11 @@ def speculative_sampling_with_stats(prefix, approx_model, target_model, max_len,
         prefix = x[:, :n + 1]
         approx_cache.rollback(n + 1)
         if n < prefix_len + gamma - 1:
-            t = sample(max_fn(target_cache._prob_history[:, n, :] - approx_cache._prob_history[:, n, :]))
+            approx_row = align_prob_row(
+                approx_cache._prob_history[:, n, :],
+                target_cache._prob_history.shape[-1],
+            )
+            t = sample(max_fn(target_cache._prob_history[:, n, :] - approx_row))
             resample_count += 1
             target_cache.rollback(n + 1)
         else:
@@ -484,9 +506,9 @@ def run_benchmark(args):
         small_vocab = output_vocab_size(small_model)
         large_vocab = output_vocab_size(large_model)
 
-        if (small_vocab is not None) and (large_vocab is not None) and (small_vocab != large_vocab):
+        if (small_vocab is not None) and (large_vocab is not None) and (small_vocab > large_vocab):
             msg = (
-                f"[pair.skip] pair={pair['name']} incompatible vocab size: "
+                f"[pair.skip] pair={pair['name']} incompatible vocab size ordering: "
                 f"approx={small_vocab}, target={large_vocab}"
             )
             if getattr(args, "fail_on_incompatible_pairs", False):
@@ -500,6 +522,11 @@ def run_benchmark(args):
                 except RuntimeError:
                     pass
             continue
+        if (small_vocab is not None) and (large_vocab is not None) and (small_vocab != large_vocab):
+            print(
+                f"[pair.warn] pair={pair['name']} vocab differs but will run with shared-prefix token ids: "
+                f"approx={small_vocab}, target={large_vocab}"
+            )
 
         maybe_run_warmup(prompts, tokenizer, small_model, large_model, args)
 
