@@ -297,42 +297,42 @@
     },
     {
         "name": "gemma4_e2b_to_e4b",
-        "approx_model_name": "google/gemma-4-E2B-it",
-        "target_model_name": "google/gemma-4-E4B-it",
+        "approx_model_name": "google/gemma-4-E2B",
+        "target_model_name": "google/gemma-4-E4B",
         "family": "gemma4",
         "tier": "gemma4_exploratory",
-        "notes": "Small same-family Gemma 4 pair to estimate upper-bound acceptance with minimal target cost."
+        "notes": "Small same-family Gemma 4 base-model pair to estimate upper-bound acceptance with minimal target cost."
     },
     {
         "name": "gemma4_e2b_to_26b_a4b",
-        "approx_model_name": "google/gemma-4-E2B-it",
-        "target_model_name": "google/gemma-4-26B-A4B-it",
+        "approx_model_name": "google/gemma-4-E2B",
+        "target_model_name": "google/gemma-4-26B-A4B",
         "family": "gemma4",
         "tier": "gemma4_exploratory",
-        "notes": "Primary Gemma 4 exploratory pair. MoE target activates about 3.8B parameters and may be attractive for speculative verify."
+        "notes": "Primary Gemma 4 exploratory base-model pair. MoE target activates about 3.8B parameters and may be attractive for speculative verify."
     },
     {
         "name": "gemma4_e4b_to_26b_a4b",
-        "approx_model_name": "google/gemma-4-E4B-it",
-        "target_model_name": "google/gemma-4-26B-A4B-it",
+        "approx_model_name": "google/gemma-4-E4B",
+        "target_model_name": "google/gemma-4-26B-A4B",
         "family": "gemma4",
         "tier": "gemma4_exploratory",
-        "notes": "Heavier-draft comparison against the 26B A4B MoE target to trade draft cost for acceptance."
+        "notes": "Heavier-draft base-model comparison against the 26B A4B MoE target to trade draft cost for acceptance."
     },
     {
         "name": "gemma4_e2b_to_31b",
-        "approx_model_name": "google/gemma-4-E2B-it",
-        "target_model_name": "google/gemma-4-31B-it",
+        "approx_model_name": "google/gemma-4-E2B",
+        "target_model_name": "google/gemma-4-31B",
         "family": "gemma4",
         "tier": "gemma4_exploratory",
-        "notes": "Dense large-target Gemma 4 pair to compare against the 26B A4B MoE target on acceptance and speedup."
+        "notes": "Dense large-target Gemma 4 base-model pair to compare against the 26B A4B MoE target on acceptance and speedup."
     },
     {
         "name": "gemma4_e4b_to_31b",
-        "approx_model_name": "google/gemma-4-E4B-it",
-        "target_model_name": "google/gemma-4-31B-it",
+        "approx_model_name": "google/gemma-4-E4B",
+        "target_model_name": "google/gemma-4-31B",
         "family": "gemma4",
         "tier": "gemma4_exploratory",
-        "notes": "Heavier-draft dense-target Gemma 4 pair for acceptance-oriented comparison."
+        "notes": "Heavier-draft dense-target Gemma 4 base-model pair for acceptance-oriented comparison."
     }
 ]
