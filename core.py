@@ -113,11 +113,7 @@ class KVCacheStats:
     total_rollback_ms: float = 0.0
 
 
-def _to_legacy_cache(past_key_values):
-    if past_key_values is None:
-        return None
-    if hasattr(past_key_values, "to_legacy_cache"):
-        return past_key_values.to_legacy_cache()
+def _preserve_cache_object(past_key_values):
     return past_key_values
 
 
@@ -150,7 +146,7 @@ class KVCacheModel:
             self.stats.initial_prompt_prefill_tokens += int(input_ids.shape[1])
             self.stats.initial_prompt_prefill_forward_ms += dt_ms
             self._prob_history = self._normalize_logits_tensor(outputs.logits)
-            self._past_key_values = _to_legacy_cache(outputs.past_key_values)
+            self._past_key_values = _preserve_cache_object(outputs.past_key_values)
             return self._prob_history[:, -1, :]
 
         cached_len = self._prob_history.shape[1]
@@ -179,7 +175,7 @@ class KVCacheModel:
             not_cached_q = torch.unsqueeze(not_cached_q, 0)
         not_cached_q = self._normalize_logits_tensor(not_cached_q)
         self._prob_history = torch.cat([self._prob_history, not_cached_q], dim=1)
-        self._past_key_values = _to_legacy_cache(outputs.past_key_values)
+        self._past_key_values = _preserve_cache_object(outputs.past_key_values)
         return not_cached_q[:, -1, :]
 
     @torch.no_grad()
@@ -203,6 +199,11 @@ class KVCacheModel:
     def rollback(self, end_pos: int):
         t0 = time.perf_counter()
         if self._past_key_values is None:
+            self.stats.total_rollback_ms += (time.perf_counter() - t0) * 1000.0
+            return
+        if hasattr(self._past_key_values, "crop"):
+            self._past_key_values.crop(end_pos)
+            self._prob_history = self._prob_history[:, :end_pos, :]
             self.stats.total_rollback_ms += (time.perf_counter() - t0) * 1000.0
             return
         trimmed = []
