@@ -202,10 +202,19 @@ class KVCacheModel:
             self.stats.total_rollback_ms += (time.perf_counter() - t0) * 1000.0
             return
         if hasattr(self._past_key_values, "crop"):
-            self._past_key_values.crop(end_pos)
-            self._prob_history = self._prob_history[:, :end_pos, :]
-            self.stats.total_rollback_ms += (time.perf_counter() - t0) * 1000.0
-            return
+            try:
+                self._past_key_values.crop(end_pos)
+                self._prob_history = self._prob_history[:, :end_pos, :]
+                self.stats.total_rollback_ms += (time.perf_counter() - t0) * 1000.0
+                return
+            except ValueError:
+                # Some modern cache layers (for example sliding-window layers used by Gemma 4)
+                # cannot be cropped after the active cache window has moved. Fall back to forcing
+                # a cache rebuild from the preserved prefix on the next forward pass.
+                self._past_key_values = None
+                self._prob_history = self._prob_history[:, :end_pos, :]
+                self.stats.total_rollback_ms += (time.perf_counter() - t0) * 1000.0
+                return
         trimmed = []
         for kv in self._past_key_values:
             k, v = split_kv(kv)
