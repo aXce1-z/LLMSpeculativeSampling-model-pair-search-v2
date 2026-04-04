@@ -341,6 +341,7 @@
         "target_model_name":  "meta-llama/Llama-3.1-8B",
         "family":  "llama3.1",
         "tier":  "llama_experimental",
-        "notes":  "Community-trained tiny drafter against Llama-3.1-8B. Requires HF access to Meta Llama and runtime compatibility check."
+        "notes":  "Community-trained tiny drafter against Llama-3.1-8B. Requires HF access to Meta Llama and runtime compatibility check.",
+        "tokenizer_name":  "meta-llama/Llama-3.1-8B"
     }
 ]

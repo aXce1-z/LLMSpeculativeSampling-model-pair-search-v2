@@ -594,7 +594,8 @@ def run_benchmark(args):
 
     for pair in pairs:
         print(f"[pair] loading approx={pair['approx_model_name']} target={pair['target_model_name']}")
-        tokenizer = AutoTokenizer.from_pretrained(pair["approx_model_name"], trust_remote_code=args.trust_remote_code)
+        tokenizer_source = pair.get("tokenizer_name", pair["approx_model_name"])
+        tokenizer = AutoTokenizer.from_pretrained(tokenizer_source, trust_remote_code=args.trust_remote_code)
         if tokenizer.pad_token is None and tokenizer.eos_token is not None:
             tokenizer.pad_token = tokenizer.eos_token
 
