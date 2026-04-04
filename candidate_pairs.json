@@ -343,5 +343,14 @@
         "tier":  "llama_experimental",
         "notes":  "Community-trained tiny drafter against Llama-3.1-8B. Requires HF access to Meta Llama and runtime compatibility check.",
         "tokenizer_name":  "meta-llama/Llama-3.1-8B"
+    },
+    {
+        "name":  "llama31_drafter500m_to_8b",
+        "approx_model_name":  "Axcel7766/Llama3.1-8b-drafter-500m",
+        "target_model_name":  "meta-llama/Llama-3.1-8B",
+        "tokenizer_name":  "meta-llama/Llama-3.1-8B",
+        "family":  "llama3.1",
+        "tier":  "llama_experimental",
+        "notes":  "Community-trained tiny drafter against Llama-3.1-8B. Uses target tokenizer override. Requires HF access to Meta Llama and runtime compatibility check."
     }
 ]
