@@ -40,6 +40,38 @@
         "notes":  "64x size gap; dense same-family heavy exploratory pair for A100-class hardware."
     },
     {
+        "name":  "qwen25_0p5b_pruned_aligned_to_3b",
+        "approx_model_name":  "Axcel7766/Qwen2.5-0.5B-pruned-aligned",
+        "target_model_name":  "Qwen/Qwen2.5-3B",
+        "family":  "qwen2.5",
+        "tier":  "qwen_pruned",
+        "notes":  "Pruned/aligned 0.5B draft variant against Qwen2.5-3B for direct comparison with the base 0.5B draft."
+    },
+    {
+        "name":  "qwen25_0p5b_pruned_aligned_to_7b",
+        "approx_model_name":  "Axcel7766/Qwen2.5-0.5B-pruned-aligned",
+        "target_model_name":  "Qwen/Qwen2.5-7B",
+        "family":  "qwen2.5",
+        "tier":  "qwen_pruned",
+        "notes":  "Pruned/aligned 0.5B draft variant against Qwen2.5-7B for direct comparison with the base 0.5B draft."
+    },
+    {
+        "name":  "qwen25_0p5b_pruned_aligned_to_14b",
+        "approx_model_name":  "Axcel7766/Qwen2.5-0.5B-pruned-aligned",
+        "target_model_name":  "Qwen/Qwen2.5-14B",
+        "family":  "qwen2.5",
+        "tier":  "qwen_pruned",
+        "notes":  "Pruned/aligned 0.5B draft variant against Qwen2.5-14B for direct comparison with the base 0.5B draft."
+    },
+    {
+        "name":  "qwen25_0p5b_pruned_aligned_to_32b",
+        "approx_model_name":  "Axcel7766/Qwen2.5-0.5B-pruned-aligned",
+        "target_model_name":  "Qwen/Qwen2.5-32B",
+        "family":  "qwen2.5",
+        "tier":  "qwen_pruned",
+        "notes":  "Pruned/aligned 0.5B draft variant against Qwen2.5-32B for direct comparison with the base 0.5B draft."
+    },
+    {
         "name":  "qwen25_1p5b_to_14b",
         "approx_model_name":  "Qwen/Qwen2.5-1.5B",
         "target_model_name":  "Qwen/Qwen2.5-14B",
