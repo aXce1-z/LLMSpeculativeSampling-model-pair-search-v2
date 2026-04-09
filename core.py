@@ -388,7 +388,7 @@ def resolve_quantization(quant_mode, compute_dtype):
         )
     raise ValueError(f"Unsupported quantization mode: {quant_mode}")
 
-def load_model(model_name, dtype, device, trust_remote_code, quant_mode):
+def load_model(model_name, dtype, device, trust_remote_code, quant_mode, compile_model=False, compile_mode="reduce-overhead"):
     kwargs = {"trust_remote_code": trust_remote_code}
     quant_cfg = resolve_quantization(quant_mode, dtype)
     if quant_cfg is not None:
@@ -401,6 +401,14 @@ def load_model(model_name, dtype, device, trust_remote_code, quant_mode):
     if device != "cuda":
         model = model.to(device)
     model.eval()
+    if compile_model:
+        if device != "cuda":
+            raise RuntimeError("draft compile requested but CUDA is unavailable in this environment.")
+        if quant_cfg is not None:
+            raise RuntimeError("draft compile is currently unsupported when approx quantization is enabled.")
+        if not hasattr(torch, "compile"):
+            raise RuntimeError("draft compile requested but torch.compile is unavailable in this environment.")
+        model = torch.compile(model, mode=compile_mode)
     return model
 
 
@@ -544,6 +552,8 @@ def run_trial(prompt_text, prompt_task, prompt_id, tokenizer, small_model, large
         "max_tokens": args.max_tokens,
         "approx_quant": args.approx_quant,
         "target_quant": args.target_quant,
+        "compile_draft": bool(args.compile_draft),
+        "compile_mode": args.compile_mode,
         "baseline_large_tps": round(baseline_large_tps, 6),
         "baseline_large_elapsed_ms": round(baseline_large_elapsed_ms, 6),
         "avg_target_baseline_generate_ms_per_token": round(avg_target_baseline_generate_ms_per_token, 6),
@@ -599,7 +609,15 @@ def run_benchmark(args):
         if tokenizer.pad_token is None and tokenizer.eos_token is not None:
             tokenizer.pad_token = tokenizer.eos_token
 
-        small_model = load_model(pair["approx_model_name"], dtype, args.device, args.trust_remote_code, args.approx_quant)
+        small_model = load_model(
+            pair["approx_model_name"],
+            dtype,
+            args.device,
+            args.trust_remote_code,
+            args.approx_quant,
+            compile_model=args.compile_draft,
+            compile_mode=args.compile_mode,
+        )
         large_model = load_model(pair["target_model_name"], dtype, args.device, args.trust_remote_code, args.target_quant)
         small_vocab = output_vocab_size(small_model)
         large_vocab = output_vocab_size(large_model)
@@ -656,11 +674,11 @@ def run_benchmark(args):
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
     write_csv(out_dir / "trial_results.csv", rows, list(rows[0].keys()))
-    summary_by_config = aggregate_rows(rows, ["pair_name", "family", "approx_quant", "target_quant", "gamma", "top_k", "top_p"])
+    summary_by_config = aggregate_rows(rows, ["pair_name", "family", "approx_quant", "target_quant", "compile_draft", "compile_mode", "gamma", "top_k", "top_p"])
     write_csv(out_dir / "summary_by_config.csv", summary_by_config, list(summary_by_config[0].keys()))
-    summary_by_pair = aggregate_rows(rows, ["pair_name", "family", "approx_quant", "target_quant"])
+    summary_by_pair = aggregate_rows(rows, ["pair_name", "family", "approx_quant", "target_quant", "compile_draft", "compile_mode"])
     write_csv(out_dir / "summary_by_pair.csv", summary_by_pair, list(summary_by_pair[0].keys()))
-    summary_by_task = aggregate_rows(rows, ["pair_name", "family", "approx_quant", "target_quant", "task"])
+    summary_by_task = aggregate_rows(rows, ["pair_name", "family", "approx_quant", "target_quant", "compile_draft", "compile_mode", "task"])
     write_csv(out_dir / "summary_by_task.csv", summary_by_task, list(summary_by_task[0].keys()))
 
     best = max(summary_by_config, key=lambda x: x["speedup"])

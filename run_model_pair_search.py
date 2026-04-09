@@ -1,4 +1,4 @@
-﻿import argparse
+import argparse
 from pathlib import Path
 
 import torch
@@ -27,6 +27,8 @@ def parse_args():
     parser.add_argument("--dtype", type=str, default="float16", choices=["float16", "float32", "bfloat16"])
     parser.add_argument("--approx_quant", type=str, default="none", choices=["none", "int8", "nf4", "fp4"])
     parser.add_argument("--target_quant", type=str, default="none", choices=["none", "int8", "nf4", "fp4"])
+    parser.add_argument("--compile_draft", action="store_true", default=False)
+    parser.add_argument("--compile_mode", type=str, default="reduce-overhead", choices=["default", "reduce-overhead", "max-autotune"])
     parser.add_argument("--trust_remote_code", action="store_true", default=False)
     parser.add_argument("--warmup", type=int, default=1)
     parser.add_argument("--run_small_baseline", action="store_true", default=False)
