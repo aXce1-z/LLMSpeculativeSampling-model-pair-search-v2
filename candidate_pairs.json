@@ -16,6 +16,14 @@
         "notes":  "6.0x; vocab/tokenizer precheck passed."
     },
     {
+        "name":  "qwen25_0p5b_aligned_3b_to_3b",
+        "approx_model_name":  "Axcel7766/Qwen2.5-0.5B-aligned-3B",
+        "target_model_name":  "Qwen/Qwen2.5-3B",
+        "family":  "qwen2.5",
+        "tier":  "qwen_aligned",
+        "notes":  "0.5B draft variant aligned specifically to Qwen2.5-3B for direct acceptance and speedup comparison against the base 0.5B draft."
+    },
+    {
         "name":  "qwen25_0p5b_to_14b",
         "approx_model_name":  "Qwen/Qwen2.5-0.5B",
         "target_model_name":  "Qwen/Qwen2.5-14B",
