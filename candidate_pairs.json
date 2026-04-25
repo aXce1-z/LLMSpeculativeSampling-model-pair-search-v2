@@ -465,5 +465,29 @@
         "family":  "llama3.1",
         "tier":  "llama_experimental",
         "notes":  "Community-trained 500M drafter initialized from Llama-3.2-1B and aligned to Llama-3.1-8B. Uses target tokenizer override. Requires HF access to Meta Llama and runtime compatibility check."
+    },
+    {
+        "name":  "qwen25_1p5b_to_32b_4bit",
+        "approx_model_name":  "Qwen/Qwen2.5-1.5B",
+        "target_model_name":  "Qwen/Qwen2.5-32B",
+        "family":  "qwen2.5",
+        "tier":  "qwen_heavy",
+        "notes":  "21.3x size gap; intended for 4-bit target experiments. Run this pair with --target_quant nf4 or fp4 rather than dense target loading."
+    },
+    {
+        "name":  "qwen3_1p7b_to_8b",
+        "approx_model_name":  "Qwen/Qwen3-1.7B",
+        "target_model_name":  "Qwen/Qwen3-8B",
+        "family":  "qwen3",
+        "tier":  "qwen3_experimental",
+        "notes":  "Qwen3 same-family medium target pair to compare against heavier 14B/32B targets under a stronger 1.7B draft."
+    },
+    {
+        "name":  "qwen3_1p7b_to_32b_4bit",
+        "approx_model_name":  "Qwen/Qwen3-1.7B",
+        "target_model_name":  "Qwen/Qwen3-32B",
+        "family":  "qwen3",
+        "tier":  "qwen3_experimental",
+        "notes":  "Large-target Qwen3 pair intended for 4-bit target experiments. Use with --target_quant nf4 or fp4."
     }
 ]
