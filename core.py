@@ -10,6 +10,10 @@ from pathlib import Path
 import torch
 from torch.nn import functional as F
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+try:
+    from transformers.cache_utils import HybridCache
+except Exception:
+    HybridCache = None
 from transformers.models.bloom.modeling_bloom import BloomForCausalLM
 
 from prompt_sets import get_prompt_sets
@@ -106,6 +110,26 @@ def _needs_explicit_cache_inputs(model) -> bool:
     return _model_type(model) in {"gemma2", "gemma3", "gemma3_text"}
 
 
+def _make_hybrid_cache(model, input_ids: torch.Tensor, max_cache_len):
+    if HybridCache is None or max_cache_len is None:
+        return None
+    base_model = _unwrap_model(model)
+    config = getattr(base_model, "config", None)
+    if config is None:
+        return None
+    kwargs = {
+        "config": config,
+        "max_cache_len": int(max_cache_len),
+        "device": input_ids.device,
+        "dtype": next(base_model.parameters()).dtype,
+    }
+    batch_size = int(input_ids.shape[0])
+    try:
+        return HybridCache(max_batch_size=batch_size, **kwargs)
+    except TypeError:
+        return HybridCache(batch_size=batch_size, **kwargs)
+
+
 def causal_forward(
     model,
     input_ids: torch.Tensor,
@@ -113,11 +137,16 @@ def causal_forward(
     past_key_values=None,
     sequence_start: int = 0,
     total_sequence_len=None,
+    max_cache_len=None,
 ):
     kwargs = {"use_cache": True}
     if past_key_values is not None:
         kwargs["past_key_values"] = past_key_values
     if _needs_explicit_cache_inputs(model):
+        if past_key_values is None:
+            hybrid_cache = _make_hybrid_cache(model, input_ids, max_cache_len)
+            if hybrid_cache is not None:
+                kwargs["past_key_values"] = hybrid_cache
         batch = int(input_ids.shape[0])
         step_len = int(input_ids.shape[1])
         if total_sequence_len is None:
@@ -164,13 +193,14 @@ def _preserve_cache_object(past_key_values):
 
 
 class KVCacheModel:
-    def __init__(self, model, temperature=1.0, top_k=0, top_p=0.0):
+    def __init__(self, model, temperature=1.0, top_k=0, top_p=0.0, max_cache_len=None):
         self._model = model
         self._past_key_values = None
         self._prob_history = None
         self._temperature = temperature
         self._top_k = top_k
         self._top_p = top_p
+        self._max_cache_len = max_cache_len
         self.stats = KVCacheStats()
 
     def _normalize_logits_tensor(self, logits: torch.Tensor) -> torch.Tensor:
@@ -186,6 +216,7 @@ class KVCacheModel:
                 input_ids,
                 sequence_start=0,
                 total_sequence_len=int(input_ids.shape[1]),
+                max_cache_len=self._max_cache_len,
             )
             dt_ms = (time.perf_counter() - t0) * 1000.0
             self.stats.forward_calls += 1
@@ -293,7 +324,13 @@ def autoregressive_sampling(x, model, num_tokens, temperature=1.0, top_k=0, top_
     past_key_values = None
     while n < target_len:
         if past_key_values is None:
-            outputs = causal_forward(model, x, sequence_start=0, total_sequence_len=int(x.shape[1]))
+            outputs = causal_forward(
+                model,
+                x,
+                sequence_start=0,
+                total_sequence_len=int(x.shape[1]),
+                max_cache_len=int(target_len),
+            )
         else:
             outputs = causal_forward(
                 model,
@@ -313,8 +350,9 @@ def autoregressive_sampling(x, model, num_tokens, temperature=1.0, top_k=0, top_
 def speculative_sampling_with_stats(prefix, approx_model, target_model, max_len, gamma=4, temperature=1.0, top_k=0, top_p=0.0, random_seed=None):
     seq_len = prefix.shape[1]
     total_len = seq_len + max_len
-    approx_cache = KVCacheModel(approx_model, temperature, top_k, top_p)
-    target_cache = KVCacheModel(target_model, temperature, top_k, top_p)
+    cache_max_len = total_len + gamma + 1
+    approx_cache = KVCacheModel(approx_model, temperature, top_k, top_p, max_cache_len=cache_max_len)
+    target_cache = KVCacheModel(target_model, temperature, top_k, top_p, max_cache_len=cache_max_len)
     device_name = model_device(approx_model).type
     accepted_count = 0
     resample_count = 0
