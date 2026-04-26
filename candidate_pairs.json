@@ -361,11 +361,11 @@
     },
     {
         "name":  "gemma2_2b_to_9b",
-        "approx_model_name":  "google/gemma-2-2b-it",
-        "target_model_name":  "google/gemma-2-9b-it",
+        "approx_model_name":  "google/gemma-2-2b",
+        "target_model_name":  "google/gemma-2-9b",
         "family":  "gemma2",
         "tier":  "gemma",
-        "notes":  "Strong single-family larger-target pair for Colab/A100. Requires HF access and runtime compatibility check."
+        "notes":  "Base-model same-family Gemma 2 pair. Requires Google Gemma access and runtime compatibility check."
     },
     {
         "name":  "gemma2_2b_to_27b",
