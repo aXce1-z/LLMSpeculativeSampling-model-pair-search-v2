@@ -388,6 +388,26 @@ def resolve_quantization(quant_mode, compute_dtype):
         )
     raise ValueError(f"Unsupported quantization mode: {quant_mode}")
 
+
+def _should_retry_with_remote_code(exc: Exception) -> bool:
+    msg = str(exc).lower()
+    return (
+        "does not recognize this architecture" in msg
+        or "model type" in msg and "trust_remote_code" in msg
+        or "model type `qwen3`" in msg
+    )
+
+
+def load_tokenizer(tokenizer_source, trust_remote_code):
+    try:
+        return AutoTokenizer.from_pretrained(tokenizer_source, trust_remote_code=trust_remote_code)
+    except ValueError as exc:
+        if trust_remote_code or not _should_retry_with_remote_code(exc):
+            raise
+        print(f"[tokenizer.warn] retrying {tokenizer_source} with trust_remote_code=True")
+        return AutoTokenizer.from_pretrained(tokenizer_source, trust_remote_code=True)
+
+
 def load_model(model_name, dtype, device, trust_remote_code, quant_mode, compile_model=False, compile_mode="reduce-overhead"):
     kwargs = {"trust_remote_code": trust_remote_code}
     quant_cfg = resolve_quantization(quant_mode, dtype)
@@ -397,7 +417,15 @@ def load_model(model_name, dtype, device, trust_remote_code, quant_mode, compile
         kwargs["torch_dtype"] = dtype
     if device == "cuda":
         kwargs["device_map"] = "auto"
-    model = AutoModelForCausalLM.from_pretrained(model_name, **kwargs)
+    try:
+        model = AutoModelForCausalLM.from_pretrained(model_name, **kwargs)
+    except ValueError as exc:
+        if trust_remote_code or not _should_retry_with_remote_code(exc):
+            raise
+        retry_kwargs = dict(kwargs)
+        retry_kwargs["trust_remote_code"] = True
+        print(f"[model.warn] retrying {model_name} with trust_remote_code=True")
+        model = AutoModelForCausalLM.from_pretrained(model_name, **retry_kwargs)
     if device != "cuda":
         model = model.to(device)
     model.eval()
@@ -605,7 +633,7 @@ def run_benchmark(args):
     for pair in pairs:
         print(f"[pair] loading approx={pair['approx_model_name']} target={pair['target_model_name']}")
         tokenizer_source = pair.get("tokenizer_name", pair["approx_model_name"])
-        tokenizer = AutoTokenizer.from_pretrained(tokenizer_source, trust_remote_code=args.trust_remote_code)
+        tokenizer = load_tokenizer(tokenizer_source, args.trust_remote_code)
         if tokenizer.pad_token is None and tokenizer.eos_token is not None:
             tokenizer.pad_token = tokenizer.eos_token
 

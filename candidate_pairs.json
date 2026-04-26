@@ -368,6 +368,14 @@
         "notes":  "Strong single-family larger-target pair for Colab/A100. Requires HF access and runtime compatibility check."
     },
     {
+        "name":  "gemma2_2b_to_27b",
+        "approx_model_name":  "google/gemma-2-2b",
+        "target_model_name":  "google/gemma-2-27b",
+        "family":  "gemma2",
+        "tier":  "gemma2_heavy",
+        "notes":  "Same-family Gemma 2 large-target pair. Requires Google Gemma access; useful for testing whether high target cost improves distributed SD speedup."
+    },
+    {
         "name":  "llama32_1b_to_31_70b",
         "approx_model_name":  "meta-llama/Llama-3.2-1B",
         "target_model_name":  "meta-llama/Llama-3.1-70B",
