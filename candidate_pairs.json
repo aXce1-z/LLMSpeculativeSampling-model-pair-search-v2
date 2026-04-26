@@ -248,6 +248,38 @@
         "notes":  "5.15x; vocab/tokenizer precheck passed."
     },
     {
+        "name":  "opt_1p3b_to_13b",
+        "approx_model_name":  "facebook/opt-1.3b",
+        "target_model_name":  "facebook/opt-13b",
+        "family":  "opt",
+        "tier":  "opt_heavy",
+        "notes":  "OPT same-family larger-target pair. Useful as a classic dense LM baseline for distributed SD scaling."
+    },
+    {
+        "name":  "opt_1p3b_to_30b",
+        "approx_model_name":  "facebook/opt-1.3b",
+        "target_model_name":  "facebook/opt-30b",
+        "family":  "opt",
+        "tier":  "opt_heavy",
+        "notes":  "OPT same-family heavy target pair. Intended for capacity/speedup tradeoff experiments on high-memory GPUs or 4-bit target loading."
+    },
+    {
+        "name":  "opt_2p7b_to_13b",
+        "approx_model_name":  "facebook/opt-2.7b",
+        "target_model_name":  "facebook/opt-13b",
+        "family":  "opt",
+        "tier":  "opt_heavy",
+        "notes":  "OPT heavier-draft pair for testing whether higher acceptance offsets draft cost."
+    },
+    {
+        "name":  "opt_2p7b_to_30b",
+        "approx_model_name":  "facebook/opt-2.7b",
+        "target_model_name":  "facebook/opt-30b",
+        "family":  "opt",
+        "tier":  "opt_heavy",
+        "notes":  "OPT heavier-draft large-target pair for target-scale sensitivity experiments."
+    },
+    {
         "name":  "pythia_160m_to_1b",
         "approx_model_name":  "EleutherAI/pythia-160m-deduped",
         "target_model_name":  "EleutherAI/pythia-1b-deduped",
