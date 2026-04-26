@@ -92,6 +92,52 @@ def split_kv(kv):
     raise ValueError(f"Unexpected kv cache entry type: {type(kv)}")
 
 
+def _unwrap_model(model):
+    return getattr(model, "_orig_mod", model)
+
+
+def _model_type(model) -> str:
+    return str(getattr(getattr(_unwrap_model(model), "config", None), "model_type", "") or "").lower()
+
+
+def _needs_explicit_cache_inputs(model) -> bool:
+    # Gemma2 uses hybrid/sliding-window cache layers. Incremental decode with only
+    # input_ids + past_key_values can enter an invalid cache-position path.
+    return _model_type(model) in {"gemma2", "gemma3", "gemma3_text"}
+
+
+def causal_forward(
+    model,
+    input_ids: torch.Tensor,
+    *,
+    past_key_values=None,
+    sequence_start: int = 0,
+    total_sequence_len=None,
+):
+    kwargs = {"use_cache": True}
+    if past_key_values is not None:
+        kwargs["past_key_values"] = past_key_values
+    if _needs_explicit_cache_inputs(model):
+        batch = int(input_ids.shape[0])
+        step_len = int(input_ids.shape[1])
+        if total_sequence_len is None:
+            total_sequence_len = sequence_start + step_len
+        kwargs["attention_mask"] = torch.ones(
+            (batch, int(total_sequence_len)),
+            dtype=torch.long,
+            device=input_ids.device,
+        )
+        cache_position = torch.arange(
+            sequence_start,
+            sequence_start + step_len,
+            dtype=torch.long,
+            device=input_ids.device,
+        )
+        kwargs["cache_position"] = cache_position
+        kwargs["position_ids"] = cache_position.unsqueeze(0).expand(batch, -1)
+    return model(input_ids, **kwargs)
+
+
 @dataclass
 class KVCacheStats:
     generate_calls: int = 0
@@ -135,7 +181,12 @@ class KVCacheModel:
     def _forward_with_kvcache(self, input_ids: torch.Tensor):
         if self._past_key_values is None:
             t0 = time.perf_counter()
-            outputs = self._model(input_ids, use_cache=True)
+            outputs = causal_forward(
+                self._model,
+                input_ids,
+                sequence_start=0,
+                total_sequence_len=int(input_ids.shape[1]),
+            )
             dt_ms = (time.perf_counter() - t0) * 1000.0
             self.stats.forward_calls += 1
             self.stats.prefill_forward_calls += 1
@@ -157,7 +208,13 @@ class KVCacheModel:
             return self._prob_history[:, -1, :]
 
         t0 = time.perf_counter()
-        outputs = self._model(last_input_id, past_key_values=self._past_key_values, use_cache=True)
+        outputs = causal_forward(
+            self._model,
+            last_input_id,
+            past_key_values=self._past_key_values,
+            sequence_start=int(cached_len),
+            total_sequence_len=int(input_ids.shape[1]),
+        )
         dt_ms = (time.perf_counter() - t0) * 1000.0
         uncached_tokens = int(last_input_id.shape[1])
         self.stats.forward_calls += 1
@@ -236,9 +293,15 @@ def autoregressive_sampling(x, model, num_tokens, temperature=1.0, top_k=0, top_
     past_key_values = None
     while n < target_len:
         if past_key_values is None:
-            outputs = model(x, use_cache=True)
+            outputs = causal_forward(model, x, sequence_start=0, total_sequence_len=int(x.shape[1]))
         else:
-            outputs = model(x[:, -1:], past_key_values=past_key_values, use_cache=True)
+            outputs = causal_forward(
+                model,
+                x[:, -1:],
+                past_key_values=past_key_values,
+                sequence_start=int(n - 1),
+                total_sequence_len=int(n),
+            )
         last_p = norm_logits(outputs.logits[:, -1, :], temperature, top_k, top_p)
         past_key_values = outputs.past_key_values
         idx_next = sample(last_p)
