@@ -168,6 +168,38 @@
         "notes":  "48x size gap; very heavy same-family dense pair intended for 4-bit target experiments on A100-class hardware."
     },
     {
+        "name":  "qwen25_1p5b_to_32b_instruct_awq",
+        "approx_model_name":  "Qwen/Qwen2.5-1.5B",
+        "target_model_name":  "Qwen/Qwen2.5-32B-Instruct-AWQ",
+        "family":  "qwen2.5",
+        "tier":  "qwen_awq_target",
+        "notes":  "Base 1.5B draft against 32B Instruct AWQ target; useful to quantify base-to-instruct distribution mismatch under a deployable 4-bit target."
+    },
+    {
+        "name":  "qwen25_1p5b_to_72b_instruct_awq",
+        "approx_model_name":  "Qwen/Qwen2.5-1.5B",
+        "target_model_name":  "Qwen/Qwen2.5-72B-Instruct-AWQ",
+        "family":  "qwen2.5",
+        "tier":  "qwen_awq_target",
+        "notes":  "Base 1.5B draft against 72B Instruct AWQ target; intended for AGX Orin 64GB feasibility and acceptance sensitivity tests."
+    },
+    {
+        "name":  "qwen25_1p5b_instruct_to_32b_instruct_awq",
+        "approx_model_name":  "Qwen/Qwen2.5-1.5B-Instruct",
+        "target_model_name":  "Qwen/Qwen2.5-32B-Instruct-AWQ",
+        "family":  "qwen2.5",
+        "tier":  "qwen_awq_target",
+        "notes":  "Instruct 1.5B draft against 32B Instruct AWQ target; preferred control for instruction-tuned target acceptance."
+    },
+    {
+        "name":  "qwen25_1p5b_instruct_to_72b_instruct_awq",
+        "approx_model_name":  "Qwen/Qwen2.5-1.5B-Instruct",
+        "target_model_name":  "Qwen/Qwen2.5-72B-Instruct-AWQ",
+        "family":  "qwen2.5",
+        "tier":  "qwen_awq_target",
+        "notes":  "Instruct 1.5B draft against 72B Instruct AWQ target; preferred AGX Orin 64GB deployability candidate if 72B AWQ loads successfully."
+    },
+    {
         "name":  "qwen25_1p5b_to_7b",
         "approx_model_name":  "Qwen/Qwen2.5-1.5B",
         "target_model_name":  "Qwen/Qwen2.5-7B",
