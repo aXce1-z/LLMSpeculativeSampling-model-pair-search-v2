@@ -298,7 +298,7 @@
     {
         "name":  "opt_1p3b_to_30b_awq",
         "approx_model_name":  "facebook/opt-1.3b",
-        "target_model_name":  "jamesdborin/opt-30b-base-4bit-AWQ",
+        "target_model_name":  "titanbot/opt-30b-base-4bit-AWQ",
         "family":  "opt",
         "tier":  "opt_awq_target",
         "notes":  "OPT 1.3B draft against a community OPT-30B 4-bit AWQ target; use to test deployable OPT target memory footprint without locally quantizing OPT."
