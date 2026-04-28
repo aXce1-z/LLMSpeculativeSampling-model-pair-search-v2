@@ -296,6 +296,14 @@
         "notes":  "OPT same-family heavy target pair. Intended for capacity/speedup tradeoff experiments on high-memory GPUs or 4-bit target loading."
     },
     {
+        "name":  "opt_1p3b_to_30b_awq",
+        "approx_model_name":  "facebook/opt-1.3b",
+        "target_model_name":  "jamesdborin/opt-30b-base-4bit-AWQ",
+        "family":  "opt",
+        "tier":  "opt_awq_target",
+        "notes":  "OPT 1.3B draft against a community OPT-30B 4-bit AWQ target; use to test deployable OPT target memory footprint without locally quantizing OPT."
+    },
+    {
         "name":  "opt_2p7b_to_13b",
         "approx_model_name":  "facebook/opt-2.7b",
         "target_model_name":  "facebook/opt-13b",
